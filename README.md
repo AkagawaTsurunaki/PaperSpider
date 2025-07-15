@@ -47,6 +47,14 @@ python main.py
 
 稍等片刻后，程序最终会自动输出一个 `result.json` 和一个 `result.xlsx`，这样您应该可以查看对应的论文信息了。
 
+## 常见问题
+
+如果在运行过程中发生了如下错误，
+```
+util.AccessLimitError: ⚠️ 对方服务器检测到我们已达到访问限制，建议等待较长一段时间后重试，或调整 `sleepInterval` 值到更大后重试。
+```
+请按照指示，然后重新运行主程序。
+
 ## Contact with Me
 
 **Email**: AkagawaTsurunaki@outlook.com
