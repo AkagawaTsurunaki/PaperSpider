@@ -1,7 +1,6 @@
 {
-    "issnList": [
-
-    ],
-    "overwriteExistedHtml": false,
-    "sleepInterval": 5
+  "issnList": [],
+  "nameList": [],
+  "overwriteExistedHtml": false,
+  "sleepInterval": 20
 }

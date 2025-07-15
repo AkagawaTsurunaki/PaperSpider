@@ -5,6 +5,7 @@ from dataclasses import dataclass
 @dataclass
 class Config:
     issnList: list[str]
+    nameList: list[str]
     overwriteExistedHtml: bool
     sleepInterval: float
 
@@ -15,5 +16,6 @@ def read_config():
         return Config(
             issnList=config['issnList'],
             overwriteExistedHtml=config['overwriteExistedHtml'],
-            sleepInterval=config['sleepInterval']
+            sleepInterval=config['sleepInterval'],
+            nameList=config['nameList']
         )

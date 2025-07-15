@@ -9,7 +9,7 @@ from tqdm import tqdm
 from config import read_config
 from parser.detail_parser import parse_detail, fetch_detail_page
 from parser.search_parser import fetch_search_page, parse_search_page
-from util import read_html, save_html
+from util import read_html, save_html, to_valid_filename
 
 _config = read_config()
 _database = {}
@@ -23,12 +23,26 @@ def analyze_base_info():
         html_doc = None
         if not _config.overwriteExistedHtml:
             try:
-                html_doc = read_html(searchissn)
+                html_doc = read_html(to_valid_filename(searchissn))
             except FileNotFoundError:
                 pass
         if html_doc is None:
-            html_doc = fetch_search_page(searchissn)
-            save_html(searchissn, html_doc)
+            html_doc = fetch_search_page(searchissn=searchissn)
+            save_html(to_valid_filename(searchissn), html_doc)
+            time.sleep(_config.sleepInterval)
+        result = parse_search_page(html_doc)
+        _database[result['journalid']] = result
+
+    for searchname in tqdm(_config.nameList):
+        html_doc = None
+        if not _config.overwriteExistedHtml:
+            try:
+                html_doc = read_html(to_valid_filename(searchname))
+            except FileNotFoundError:
+                pass
+        if html_doc is None:
+            html_doc = fetch_search_page(searchname=searchname)
+            save_html(to_valid_filename(searchname), html_doc)
             time.sleep(_config.sleepInterval)
         result = parse_search_page(html_doc)
         _database[result['journalid']] = result
@@ -42,12 +56,12 @@ def analyze_detail_info():
         html_doc = None
         if not _config.overwriteExistedHtml:
             try:
-                html_doc = read_html(f"detail-{journalid}")
+                html_doc = read_html(to_valid_filename(f"detail-{journalid}"))
             except FileNotFoundError:
                 pass
         if html_doc is None:
             html_doc = fetch_detail_page(journalid)
-            save_html(f"detail-{journalid}", html_doc)
+            save_html(to_valid_filename(f"detail-{journalid}"), html_doc)
             time.sleep(_config.sleepInterval)
 
         detail = parse_detail(html_doc)

@@ -8,10 +8,10 @@ from lxml import html
 from util import check_risk_ctrl
 
 
-def fetch_search_page(searchissn: str = "") -> str:
+def fetch_search_page(searchissn: str = "", searchname: str = "") -> str:
     url = 'https://www.letpub.com.cn/index.php?page=journalapp&view=search'
     data = {
-        "searchname": "",
+        "searchname": searchname,
         "searchissn": searchissn,
         "searchfield": "",
         "searchimpactlow": "",

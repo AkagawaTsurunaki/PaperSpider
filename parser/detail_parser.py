@@ -28,10 +28,24 @@ def parse_detail(html_doc: str):
             cas_rank = cas_rank[0].text
             if cas_rank is not None:
                 cas_result.append(cas_rank.strip())
-    cas2025_type, cas2025_rank = cas_result[0], cas_result[1]
-    cas2023_type, cas2023_rank = cas_result[2], cas_result[3]
-    cas2022_type, cas2022_rank = cas_result[4], cas_result[5]
     result = {}
+    cas2025_type, cas2025_rank = None, None
+    cas2023_type, cas2023_rank = None, None
+    cas2022_type, cas2022_rank = None, None
+
+    try:
+        cas2025_type, cas2025_rank = cas_result[0], cas_result[1]
+    except IndexError:
+        pass
+    try:
+        cas2023_type, cas2023_rank = cas_result[2], cas_result[3]
+    except IndexError:
+        pass
+
+    try:
+        cas2022_type, cas2022_rank = cas_result[4], cas_result[5]
+    except IndexError:
+        pass
 
     if cas2025_type is None and cas2025_rank is None:
         result['中国科学院期刊分区（2025年3月最新升级版）'] = "-"
