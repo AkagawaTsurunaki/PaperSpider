@@ -1,5 +1,7 @@
 # Paper Spider
 
+![Static Badge](https://img.shields.io/badge/Python%20-%20>=3.10-blue)
+
 一个用于获取来自 [Letpub](https://www.letpub.com.cn/) 的论文数据的工具。
 
 通过 ISSN 搜索对应的期刊或会议信息，可以获取期刊名、综合评分、期刊指标、学科领域、中国科学院期刊分区等信息。
