@@ -1,4 +1,5 @@
 import json
+import os.path
 import time
 
 import pandas as pd
@@ -18,7 +19,7 @@ _excel_output_path = "result.xlsx"
 
 def analyze_base_info():
     # 第一阶段先获取基础信息
-    for searchissn in tqdm(_config.issnList):
+    for searchissn in tqdm(_config.issnList, desc="分析论文基础信息"):
         html_doc = None
         if not _config.overwriteExistedHtml:
             try:
@@ -31,15 +32,13 @@ def analyze_base_info():
             time.sleep(_config.sleepInterval)
         result = parse_search_page(html_doc)
         _database[result['journalid']] = result
-        logger.info(
-            f"完成了对 {searchissn} 的搜索：\n{json.dumps(result, ensure_ascii=False, indent=4)}")
 
-    logger.info("基础信息获取完毕！")
+    logger.info("✅️ 基础信息获取完毕！")
 
 
 def analyze_detail_info():
     # 细粒度地获取历年指标
-    for journalid, result in tqdm(_database.items()):
+    for journalid, result in tqdm(_database.items(), desc="分析论文详细信息"):
         html_doc = None
         if not _config.overwriteExistedHtml:
             try:
@@ -56,23 +55,36 @@ def analyze_detail_info():
             result[key] = value
         _database[journalid] = result
 
-    logger.info("详细信息获取完毕！")
+    logger.info("✅️ 详细信息获取完毕！")
 
 
 def save_data():
     with open(_result_json_path, mode='w+', encoding='utf-8') as file:
         file.write(json.dumps(_database, indent=4, ensure_ascii=False))
-    logger.info(f"解析的 JSON 数据已保存至：{_result_json_path}")
+    logger.info(f"💾 解析的 JSON 数据已保存至：{os.path.abspath(_result_json_path)}")
 
 
 def json_to_excel():
-    df = pd.read_json(_result_json_path)
+    with open(_result_json_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    records = [
+        {"journalid": jid, **info}
+        for jid, info in data.items()
+    ]
+
+    df = pd.DataFrame(records)
     df.to_excel(_excel_output_path, index=False)
-    logger.info(f"转换的 Excel 文件已保存至: {_excel_output_path}")
+    logger.info(f"💾 转换的 Excel 文件已保存至: {os.path.abspath(_excel_output_path)}")
 
 
 if __name__ == "__main__":
-    analyze_base_info()
-    analyze_detail_info()
-    save_data()
-    logger.info("所有数据保存完毕！")
+    try:
+        analyze_base_info()
+        analyze_detail_info()
+        save_data()
+        json_to_excel()
+        logger.info("📑 PaperSpider 运行完毕！")
+    except Exception as e:
+        logger.exception(e)
+        logger.error("❌ PaperSpider 运行失败！请查看错误原因。")
