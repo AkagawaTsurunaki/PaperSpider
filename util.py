@@ -12,7 +12,7 @@ def check_risk_ctrl(html_doc):
     text = soup.getText()
     if "您请求页面的速度过快" in text:
         raise AccessLimitError(
-            "⚠️ 对方服务器检测到我们已达到访问限制，建议等待较长一段时间后重试，或调整 interval 值到更大。")
+            "⚠️ 对方服务器检测到我们已达到访问限制，建议等待较长一段时间后重试，或调整 `sleepInterval` 值到更大后重试。")
 
 
 def save_html(name: str, html_doc: str):
