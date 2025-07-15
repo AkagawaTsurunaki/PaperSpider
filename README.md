@@ -28,6 +28,10 @@ pip install .
         "0162-8828", // 需要搜索的期刊或会议的 ISSN 号码
         ...
     ],
+    "nameList": [
+        "ACM Transactions on Graphics", // 需要搜素的期刊或会议的名称 
+        ...
+    ],
     "overwriteExistedHtml": true, // 是否覆盖已有的 HTML 网页
     "sleepInterval": 5 // 每次网络请求的间隔时间（秒）
 }
