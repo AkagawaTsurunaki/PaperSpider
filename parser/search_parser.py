@@ -62,7 +62,6 @@ def parse_search_page(html_doc: str):
     for k, v in zip(titles, values):
         result[k] = v
 
-    print(result)
     return result
 
 
