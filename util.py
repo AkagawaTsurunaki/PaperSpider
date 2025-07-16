@@ -22,6 +22,7 @@ def to_valid_filename(name: str) -> str:
     name = name.strip().strip('.')
     name = re.sub(r'_+', '_', name)
     name = re.sub(r'\.+', '.', name)
+    name = name.lower()
     return name
 
 
@@ -39,3 +40,8 @@ def read_html(name: str) -> str:
     with open(f"data/{name}.html", mode='r', encoding='utf-8') as file:
         result = file.read()
         return result
+
+
+def remove_html(name: str):
+    if os.path.exists(f"data/{name}.html"):
+        os.remove(f"data/{name}.html")

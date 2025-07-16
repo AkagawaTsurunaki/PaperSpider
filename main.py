@@ -9,7 +9,7 @@ from tqdm import tqdm
 from config import read_config
 from parser.detail_parser import parse_detail, fetch_detail_page
 from parser.search_parser import fetch_search_page, parse_search_page
-from util import read_html, save_html, to_valid_filename
+from util import read_html, save_html, to_valid_filename, remove_html
 
 _config = read_config()
 _database = {}
@@ -19,7 +19,7 @@ _excel_output_path = "result.xlsx"
 
 def analyze_base_info():
     # 第一阶段先获取基础信息
-    for searchissn in tqdm(_config.issnList, desc="分析论文基础信息"):
+    for searchissn in tqdm(set(_config.issnList), desc="分析论文基础信息"):
         html_doc = None
         if not _config.overwriteExistedHtml:
             try:
@@ -31,9 +31,13 @@ def analyze_base_info():
             save_html(to_valid_filename(searchissn), html_doc)
             time.sleep(_config.sleepInterval)
         result = parse_search_page(html_doc)
+        if result['journalid'] is None:
+            logger.warning(f"😭 ISSN 为 {searchissn} 的内容未找到，请检查您的 ISSN 后重试：journalid 为 null")
+            remove_html(to_valid_filename(searchissn))
+
         _database[result['journalid']] = result
 
-    for searchname in tqdm(_config.nameList):
+    for searchname in tqdm(set(_config.nameList)):
         html_doc = None
         if not _config.overwriteExistedHtml:
             try:
@@ -45,6 +49,9 @@ def analyze_base_info():
             save_html(to_valid_filename(searchname), html_doc)
             time.sleep(_config.sleepInterval)
         result = parse_search_page(html_doc)
+        if result['journalid'] is None:
+            logger.warning(f"😭 期刊/会议名为 {searchname} 的内容未找到，请检查您输入的名称后重试：journalid 为 null")
+            remove_html(to_valid_filename(searchname))
         _database[result['journalid']] = result
 
     logger.info("✅️ 基础信息获取完毕！")
