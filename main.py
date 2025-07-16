@@ -9,7 +9,7 @@ from tqdm import tqdm
 from config import read_config
 from parser.detail_parser import parse_detail, fetch_detail_page
 from parser.search_parser import fetch_search_page, parse_search_page
-from util import read_html, save_html, to_valid_filename, remove_html
+from util import read_html, save_html, to_valid_filename, remove_html, ContentNotFoundError
 
 _config = read_config()
 _database = {}
@@ -32,8 +32,8 @@ def analyze_base_info():
             time.sleep(_config.sleepInterval)
         result = parse_search_page(html_doc)
         if result['journalid'] is None:
-            logger.warning(f"😭 ISSN 为 {searchissn} 的内容未找到，请检查您的 ISSN 后重试：journalid 为 null")
             remove_html(to_valid_filename(searchissn))
+            raise ContentNotFoundError(f"😭 ISSN 为 {searchissn} 的内容未找到，请检查您的 ISSN 后重试：`journalid` 为 null")
 
         _database[result['journalid']] = result
 
@@ -50,8 +50,9 @@ def analyze_base_info():
             time.sleep(_config.sleepInterval)
         result = parse_search_page(html_doc)
         if result['journalid'] is None:
-            logger.warning(f"😭 期刊/会议名为 {searchname} 的内容未找到，请检查您输入的名称后重试：journalid 为 null")
             remove_html(to_valid_filename(searchname))
+            raise ContentNotFoundError(f"😭 期刊/会议名为 {searchname} 的内容未找到，请检查您输入的名称后重试：`journalid` 为 null")
+
         _database[result['journalid']] = result
 
     logger.info("✅️ 基础信息获取完毕！")

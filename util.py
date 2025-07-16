@@ -8,6 +8,10 @@ class AccessLimitError(RuntimeError):
     pass
 
 
+class ContentNotFoundError(RuntimeError):
+    pass
+
+
 def check_risk_ctrl(html_doc):
     soup = BeautifulSoup(html_doc, 'html.parser')
     text = soup.getText()
